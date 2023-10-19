@@ -13,11 +13,10 @@ class LibroController {
           if (result.length > 0) {
             res.json(result[0]);
           } else {
-            res.status(404).json({ message: 'Libro no encontrado' });
+            res.status(404).json({"Error": 'Libro no encontrado' });
           }
         } catch (error) {
           console.error('Error al obtener el libro:', error);
-          res.status(500).json({ message: 'Error interno del servidor' });
         }
       }
 
