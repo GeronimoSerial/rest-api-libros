@@ -6,6 +6,21 @@ class LibroController {
         res.json(result);
     }
 
+    async getOne(req, res) {
+        const id = req.params.id;
+        try {
+          const [result] = await pool.query('SELECT * FROM Libros WHERE id = ?', [id]);
+          if (result.length > 0) {
+            res.json(result[0]);
+          } else {
+            res.status(404).json({ message: 'Libro no encontrado' });
+          }
+        } catch (error) {
+          console.error('Error al obtener el libro:', error);
+          res.status(500).json({ message: 'Error interno del servidor' });
+        }
+      }
+
     async add(req,res){
         const libro = req.body;
         const [result] = await pool.query(`INSERT INTO Libros(nombre, autor, categoria, añoPublicacion, ISBN) VALUES(?, ?, ?, ?, ?)`, [libro.nombre, libro.autor, libro.categoria, libro.añoPublicacion, libro.ISBN]);
