@@ -13,7 +13,7 @@ class LibroController {
           if (result.length > 0) {
             res.json(result[0]);
           } else {
-            res.status(404).json({"Error": 'Libro no encontrado en la base de datos' });
+            res.status(404).json({"Error": 'Libro no encontrado en la base de datos en la base de datos' });
           }
         } catch (error) {
           console.error('Error al obtener el libro:', error);
