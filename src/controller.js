@@ -13,7 +13,7 @@ class LibroController {
           if (result.length > 0) {
             res.json(result[0]);
           } else {
-            res.status(404).json({"Error": 'Libro no encontrado' });
+            res.status(404).json({"Error": 'Libro no encontrado en la base de datos' });
           }
         } catch (error) {
           console.error('Error al obtener el libro:', error);
@@ -26,15 +26,21 @@ class LibroController {
         res.json({"ID insertado": result.insertId});
     }
 
-     async delete(req,res){
-        const libro = req.body;
-        const [result] = await pool.query(`DELETE FROM Personas WHERE id=(?)`, [libro.id]);
-        res.json({"Registros eliminados": result.affectedRows});
-    }
+    //  async deleteId(req,res){
+    //     const libro = req.body;
+    //     const [result] = await pool.query(`DELETE FROM Libros WHERE id=(?)`, [libro.id]);
+    //     res.json({"Registros eliminados": result.affectedRows});
+    // }
+
+    async deleteIsbn(req, res){
+        const ISBN = req.params.ISBN;
+        const [result] = await pool.query('DELETE FROM Libros WHERE ISBN=(?)', [ISBN]);
+        res.json({"Registros Eliminados": result.affectedRows});
+      }
 
     async update(req,res){
         const libro = req.body;
-        const [result] = await pool.query(`UPDATE Personas SET nombre=(?), autor=(?), categoria=(?), añoPublicacion=(?), ISBN=(?) WHERE id=(?)`, [libro.nombre, libro.autor, libro.categoria, libro.añoPublicacion, libro.ISBN, libro.id]);
+        const [result] = await pool.query(`UPDATE Libros SET nombre=(?), autor=(?), categoria=(?), añoPublicacion=(?), ISBN=(?) WHERE id=(?)`, [libro.nombre, libro.autor, libro.categoria, libro.añoPublicacion, libro.ISBN, libro.id]);
         res.json({"Registros actualizados": result.changedRows});
     }
    
