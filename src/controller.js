@@ -1,11 +1,18 @@
 import { pool } from './database.js';
 
 class LibroController {
-    async getAll(req, res) {
+    
+  //Obtener todos los libros del database
+  async getAll(req, res) {
+      try {
         const [result] = await pool.query('SELECT * FROM `libros`');
         res.json(result);
-    }
+      } catch (error) {
+        console.log('Error al obtener todos los libros:', error);
+      }  
 
+    }
+  //Obtener un solo libro del database
     async getOne(req, res) {
         const id = req.params.id;
         try {
@@ -20,31 +27,39 @@ class LibroController {
         }
       }
 
+   //Añadir un libro al database   
     async add(req,res){
         const libro = req.body;
-        const [result] = await pool.query(`INSERT INTO Libros(nombre, autor, categoria, añoPublicacion, ISBN) VALUES(?, ?, ?, ?, ?)`, [libro.nombre, libro.autor, libro.categoria, libro.añoPublicacion, libro.ISBN]);
-        res.json({"ID insertado": result.insertId});
+        try {
+          const [result] = await pool.query(`INSERT INTO Libros(nombre, autor, categoria, añoPublicacion, ISBN) VALUES(?, ?, ?, ?, ?)`, [libro.nombre, libro.autor, libro.categoria, libro.añoPublicacion, libro.ISBN]);
+          res.json({"ID insertado": result.insertId});
+        } catch (error) {
+            console.log('Error al añadir el libro:',error);
+        }
+        
     }
-
-    //  async deleteId(req,res){
-    //     const libro = req.body;
-    //     const [result] = await pool.query(`DELETE FROM Libros WHERE id=(?)`, [libro.id]);
-    //     res.json({"Registros eliminados": result.affectedRows});
-    // }
-
+    //Eliminar por ISBN Un libro del database
     async deleteIsbn(req, res){
+      try {
         const ISBN = req.params.ISBN;
         const [result] = await pool.query('DELETE FROM Libros WHERE ISBN=(?)', [ISBN]);
         res.json({"Registros Eliminados": result.affectedRows});
-      }
+      } catch (error) {
+          console.log('Error al eliminar por ISBN:', error);
+      }  
 
+     }
+
+     //Actualizar libros del database;
     async update(req,res){
-        const libro = req.body;
-        const [result] = await pool.query(`UPDATE Libros SET nombre=(?), autor=(?), categoria=(?), añoPublicacion=(?), ISBN=(?) WHERE id=(?)`, [libro.nombre, libro.autor, libro.categoria, libro.añoPublicacion, libro.ISBN, libro.id]);
-        res.json({"Registros actualizados": result.changedRows});
-    }
-   
-    
+        try {
+          const libro = req.body;
+          const [result] = await pool.query(`UPDATE Libros SET nombre=(?), autor=(?), categoria=(?), añoPublicacion=(?), ISBN=(?) WHERE id=(?)`, [libro.nombre, libro.autor, libro.categoria, libro.añoPublicacion, libro.ISBN, libro.id]);
+          res.json({"Registros actualizados": result.changedRows});
+        } catch (error) {
+            console.log('Error al actualizar el libro: ', error);  
+        }
+     }
 }
 
 export const libros = new LibroController();
