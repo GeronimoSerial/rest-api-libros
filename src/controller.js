@@ -29,15 +29,22 @@ class LibroController {
 
    //Añadir un libro al database   
     async add(req,res){
-        const libro = req.body;
-        try {
-          const [result] = await pool.query(`INSERT INTO Libros(nombre, autor, categoria, añoPublicacion, ISBN) VALUES(?, ?, ?, ?, ?)`, [libro.nombre, libro.autor, libro.categoria, libro.añoPublicacion, libro.ISBN]);
+      const libro = req.body;
+     // fix subida atributos invalidos
+      const listaAtributos = ['nombre', 'autor', 'categoria', 'añoPublicacion', 'ISBN'];
+      const atributosExtra = Object.keys(libro).filter(attr => !listaAtributos.includes(attr));
+  
+      if (atributosExtra.length > 0) {
+          return res.json({ error: `Atributos invalidos: ${atributosExtra.join(' , ')}` });
+      }
+       try {
+          const [result] = await pool.query(`INSERT INTO Libros(nombre, autor, categoria, añoPublicacion, ISBN) VALUES(?, ?, ?, ?, ?)`, 
+          [libro.nombre, libro.autor, libro.categoria, libro.añoPublicacion, libro.ISBN]);
           res.json({"ID insertado": result.insertId});
-        } catch (error) {
-            console.log('Error al añadir el libro:',error);
-        }
-        
-    }
+      }catch (error) {
+          console.log('Error al añadir el libro:',error);
+      } 
+  }
     //Eliminar por ISBN Un libro del database
     async deleteIsbn(req, res){
       try {
